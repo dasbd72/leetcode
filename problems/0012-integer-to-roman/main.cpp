@@ -68,3 +68,45 @@ class Solution {
         return roman;
     }
 };
+
+class SolutionV2 {
+   public:
+    map<int, char> table;
+    SolutionV2() {
+        table[1] = 'I';
+        table[5] = 'V';
+        table[10] = 'X';
+        table[50] = 'L';
+        table[100] = 'C';
+        table[500] = 'D';
+        table[1000] = 'M';
+    }
+    string intToRoman(int num) {
+        string roman;
+        while (num >= 1000) {
+            num -= 1000;
+            roman += "M";
+        }
+        for (int level = 100; level >= 1; level /= 10) {
+            if (num >= level * 9) {
+                num -= level * 9;
+                roman += table[level];
+                roman += table[level * 10];
+            }
+            if (num >= level * 5) {
+                num -= level * 5;
+                roman += table[level * 5];
+            }
+            if (num >= level * 4) {
+                num -= level * 4;
+                roman += table[level];
+                roman += table[level * 5];
+            }
+            while (num >= level) {
+                num -= level;
+                roman += table[level];
+            }
+        }
+        return roman;
+    }
+};
