@@ -3,7 +3,9 @@
     "*.c": "c",
     "*.h": "c",
     "*.cpp": "cpp",
-    "*.hpp": "cpp"
+    "*.hpp": "cpp",
+    "string": "cpp",
+    "vector": "cpp"
   },
   "C_Cpp.default.cppStandard": "c++17"
 }
