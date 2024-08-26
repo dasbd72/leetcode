@@ -11,10 +11,12 @@ dir=problems/$id-$name
 file=$dir/main.cpp
 
 mkdir -p $dir
-echo """#include <bits/stdc++.h>
+if [ ! -f $file ]; then
+    echo """#include <bits/stdc++.h>
 using namespace std;
 """ > $file
-echo "Generated $file"
+    echo "Generated $file"
+fi
 
 if [ -n "$EDITOR" ]; then
     $EDITOR $file
