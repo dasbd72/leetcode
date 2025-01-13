@@ -6,7 +6,7 @@ class Solution {
     int minimumLength(string s) {
         int mpos[26] = {};
         int minlen = 0;
-        for (int i = 0; i < (int)s.size(); i++) {
+        for (int i = 0; i < (int)s.length(); i++) {
             mpos[s[i] - 'a']++;
         }
         for (int i = 0; i < 26; i++) {
@@ -16,11 +16,17 @@ class Solution {
             //     continue;
             // }
             // minlen += (mpos[i] % 2 == 0 ? 2 : 1);
-            // Version 2 with subtraction
-            while (freq > 2) {
-                freq -= 2;
+            // // Version 2 with subtraction
+            // while (freq > 2) {
+            //     freq -= 2;
+            // }
+            // minlen += freq;
+            // Version 3 with bit and
+            if (freq & 1) {
+                minlen += 1;
+            } else if (freq) {
+                minlen += 2;
             }
-            minlen += freq;
         }
         return minlen;
     }
