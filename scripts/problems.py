@@ -12,6 +12,7 @@ HEADERS = {
 
 
 class Args:
+    add: bool = False
     daily: bool = False
     problem_id: int = None
     editor: str = "code"
@@ -19,6 +20,12 @@ class Args:
 
 def parse_args():
     parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-a",
+        "--add",
+        action="store_true",
+        help="Git add",
+    )
     parser.add_argument(
         "-d", "--daily", action="store_true", help="Get the daily problem"
     )
@@ -198,10 +205,16 @@ def main():
     title = problem["title"]
     title_slug = problem["title_slug"]
 
-    # Create and open the problem in the specified editor
-    filename = create_file(problem_id, title_slug)
-    print(f'Opening problem "{problem_id}. {title}" in {args.editor}')
-    os.system(f"{args.editor} {filename}")
+    if args.add:
+        # Get filename and add to git
+        filename = create_file(problem_id, title_slug)
+        code = os.system(f"git add {filename}")
+        print(f"Git add returned code: {code}")
+    else:
+        # Create and open the problem in the specified editor
+        filename = create_file(problem_id, title_slug)
+        print(f'Opening problem "{problem_id}. {title}" in {args.editor}')
+        os.system(f"{args.editor} {filename}")
 
 
 if __name__ == "__main__":
