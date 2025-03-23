@@ -141,8 +141,8 @@ def get_problem_by_problem_id(problem_id):
         "variables": {
             "categorySlug": "all-code-essentials",  # You can change the category here if needed
             "skip": problem_id
-            - problem_id % 10 - 5,  # Start from the first problem
-            "limit": 10,  # Set how many problems to retrieve in one request
+            - problem_id % 50,  # Start from the first problem
+            "limit": 50,  # Set how many problems to retrieve in one request
             "filters": {},
         },
         "operationName": "problemsetQuestionList",
