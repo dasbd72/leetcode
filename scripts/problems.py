@@ -208,8 +208,12 @@ def main():
     if args.add:
         # Get filename and add to git
         filename = create_file(problem_id, title_slug)
+        code = os.system(f"git reset")
+        print(f"Git reset returned code: {code}")
         code = os.system(f"git add {filename}")
         print(f"Git add returned code: {code}")
+        code = os.system(f"git commit -m {problem_id:04d}")
+        print(f"Git commit returned code: {code}")
     else:
         # Create and open the problem in the specified editor
         filename = create_file(problem_id, title_slug)
