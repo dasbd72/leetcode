@@ -118,68 +118,70 @@ def get_daily_problem():
 
 
 def get_problem_by_problem_id(problem_id):
-    # Define the GraphQL query
-    query = {
-        "query": """
-            query problemsetQuestionList($categorySlug: String, $limit: Int, $skip: Int, $filters: QuestionListFilterInput) {
-              problemsetQuestionList: questionList(
-                categorySlug: $categorySlug
-                limit: $limit
-                skip: $skip
-                filters: $filters
-              ) {
-                total: totalNum
-                questions: data {
-                  frontendQuestionId: questionFrontendId
-                  titleSlug
-                  title
-                  difficulty
+    for skip in [
+        max(0, problem_id - problem_id % 50 - 1),
+        problem_id - problem_id % 50,
+    ]:
+        # Define the GraphQL query
+        query = {
+            "query": """
+                query problemsetQuestionList($categorySlug: String, $limit: Int, $skip: Int, $filters: QuestionListFilterInput) {
+                problemsetQuestionList: questionList(
+                    categorySlug: $categorySlug
+                    limit: $limit
+                    skip: $skip
+                    filters: $filters
+                ) {
+                    total: totalNum
+                    questions: data {
+                    frontendQuestionId: questionFrontendId
+                    titleSlug
+                    title
+                    difficulty
+                    }
                 }
-              }
-            }
-        """,
-        "variables": {
-            "categorySlug": "all-code-essentials",  # You can change the category here if needed
-            "skip": max(
-                0, problem_id - problem_id % 50 - 1
-            ),  # Start from the first problem
-            "limit": 50,  # Set how many problems to retrieve in one request
-            "filters": {},
-        },
-        "operationName": "problemsetQuestionList",
-    }
-
-    # Send POST request to the GraphQL endpoint
-    response = requests.post(GRAPHQL_URL, json=query, headers=HEADERS)
-
-    # Check if the request was successful
-    if response.status_code == 200:
-        data = response.json()
-
-        # Extract the problems list
-        questions = data["data"]["problemsetQuestionList"]["questions"]
-
-        # Iterate through the problems and find the matching problem ID
-        for question in questions:
-            if question["frontendQuestionId"] == str(
-                problem_id
-            ):  # Match the problem ID
-                problem_id = question["frontendQuestionId"]
-                title = question["title"]
-                title_slug = question["titleSlug"]
-                difficulty = question["difficulty"]
-                response = {
-                    "problem_id": problem_id,
-                    "title": title,
-                    "title_slug": title_slug,
-                    "difficulty": difficulty,
                 }
-                return response
-        raise Exception(f"Problem with ID {problem_id} not found.")
-    else:
-        raise Exception(
-            f"Failed to retrieve the problem list. Status code: {response.status_code}"
-        )
+            """,
+            "variables": {
+                "categorySlug": "all-code-essentials",  # You can change the category here if needed
+                "skip": skip,  # Start from the first problem
+                "limit": 50,  # Set how many problems to retrieve in one request
+                "filters": {},
+            },
+            "operationName": "problemsetQuestionList",
+        }
+
+        # Send POST request to the GraphQL endpoint
+        response = requests.post(GRAPHQL_URL, json=query, headers=HEADERS)
+
+        # Check if the request was successful
+        if response.status_code == 200:
+            data = response.json()
+
+            # Extract the problems list
+            questions = data["data"]["problemsetQuestionList"]["questions"]
+
+            # Iterate through the problems and find the matching problem ID
+            for question in questions:
+                if question["frontendQuestionId"] == str(
+                    problem_id
+                ):  # Match the problem ID
+                    problem_id = question["frontendQuestionId"]
+                    title = question["title"]
+                    title_slug = question["titleSlug"]
+                    difficulty = question["difficulty"]
+                    response = {
+                        "problem_id": problem_id,
+                        "title": title,
+                        "title_slug": title_slug,
+                        "difficulty": difficulty,
+                    }
+                    return response
+        else:
+            raise Exception(
+                f"Failed to retrieve the problem list. Status code: {response.status_code}"
+            )
+    raise Exception(f"Problem with ID {problem_id} not found.")
 
 
 def create_file(problem_id: int, title_slug: str):
