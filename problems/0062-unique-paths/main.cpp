@@ -31,28 +31,49 @@ using namespace std;
 //     }
 // };
 
-// Bottom-Up (passed)
+// // Bottom-Up (passed)
+// class Solution {
+// public:
+//     int uniquePaths(int m, int n) {
+//         vector<vector<int>> dp(m, vector<int>(n, 0));
+//         dp[0][0] = 1;
+//         for(int r = 1; r < m; r++) {
+//             for(int i = 0; r - i >= 0 && i < n; i++) {
+//                 if(r - i - 1 >= 0)  dp[r - i][i] += dp[r - i - 1][i];
+//                 if(i - 1 >= 0)      dp[r - i][i] += dp[r - i][i - 1];
+//             }
+//         }
+//         for(int c = 1; c < n; c++) {
+//             for(int i = 0; c + i < n && m - 1 - i >= 0; i++) {
+//                 if(m - 1 - i - 1 >= 0)  dp[m - 1 - i][c + i] += dp[m - 1 - i - 1][c + i];
+//                 if(c + i - 1 >= 0)      dp[m - 1 - i][c + i] += dp[m - 1 - i][c + i - 1];
+//             }
+//         }
+//         return dp[m - 1][n - 1];
+//     }
+// };
+
 class Solution {
    public:
     int uniquePaths(int m, int n) {
-        vector<vector<int>> dp(m, vector<int>(n, 0));
-        dp[0][0] = 1;
-        for (int r = 1; r < m; r++) {
-            for (int i = 0; r - i >= 0 && i < n; i++) {
-                if (r - i - 1 >= 0)
-                    dp[r - i][i] += dp[r - i - 1][i];
-                if (i - 1 >= 0)
-                    dp[r - i][i] += dp[r - i][i - 1];
+        vector<int> dp(m + n - 1, 0);
+        dp[0] = 1;
+        for (int i = 1; i < m + n - 1; i++) {
+            int j0 = max(0, i - (m - 1));
+            int j1 = min(i, n - 1);
+            for (int j = j1; j >= j0; j--) {
+                int r = i - j;
+                int c = j;
+                int tmp = 0;
+                if (r - 1 >= 0) {
+                    tmp += dp[j];
+                }
+                if (c - 1 >= 0) {
+                    tmp += dp[j - 1];
+                }
+                dp[j] = tmp;
             }
         }
-        for (int c = 1; c < n; c++) {
-            for (int i = 0; c + i < n && m - 1 - i >= 0; i++) {
-                if (m - 1 - i - 1 >= 0)
-                    dp[m - 1 - i][c + i] += dp[m - 1 - i - 1][c + i];
-                if (c + i - 1 >= 0)
-                    dp[m - 1 - i][c + i] += dp[m - 1 - i][c + i - 1];
-            }
-        }
-        return dp[m - 1][n - 1];
+        return dp[n - 1];
     }
 };
